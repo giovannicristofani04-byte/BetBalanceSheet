@@ -7,6 +7,9 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import google.generativeai as genai
 from PIL import Image
 import io
+from sports_api import get_nba_player_id
+print("BDL test - player id:", get_nba_player_id("LeBron James"))
+
 
 # Configurazione
 TELEGRAM_TOKEN = "IL_TUO_TOKEN_QUI"  # Sostituisci con il tuo token da @BotFather
