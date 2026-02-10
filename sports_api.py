@@ -6,6 +6,7 @@ Questo file mostra come integrare API gratuite per NBA, Calcio e Tennis.
 import requests
 from datetime import datetime
 import re
+import os 
 
 class SportsAPIIntegration:
     """
