@@ -26,6 +26,24 @@ def balldontlie_get(endpoint, params=None):
     r.raise_for_status()
     return r.json()
 
+def get_nba_player_id(player_name):
+    data = balldontlie_get("/v1/players", {"search": player_name})
+    players = data.get("data", [])
+    return players[0]["id"] if players else None
+
+
+def get_nba_player_stats_for_game(player_id, game_id):
+    data = balldontlie_get(
+        "/v1/stats",
+        {
+            "player_ids[]": player_id,
+            "game_ids[]": game_id
+        }
+    )
+    stats = data.get("data", [])
+    return stats[0] if stats else None
+
+
 class SportsAPIIntegration:
     """
     Integrazione con API sportive gratuite per ottenere risultati.
