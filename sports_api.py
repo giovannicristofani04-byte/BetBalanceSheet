@@ -7,6 +7,24 @@ import requests
 from datetime import datetime
 import re
 import os 
+# =========================
+# BALLDONTLIE CONFIG (NBA)
+# =========================
+BALLDONTLIE_KEY = os.getenv("BALLDONTLIE_KEY")
+BALLDONTLIE_BASE_URL = "https://api.balldontlie.io"
+
+def balldontlie_get(endpoint, params=None):
+    if not BALLDONTLIE_KEY:
+        raise Exception("BALLDONTLIE_KEY mancante nelle variabili d'ambiente")
+
+    r = requests.get(
+        BALLDONTLIE_BASE_URL + endpoint,
+        headers={"Authorization": BALLDONTLIE_KEY},
+        params=params,
+        timeout=20
+    )
+    r.raise_for_status()
+    return r.json()
 
 class SportsAPIIntegration:
     """
