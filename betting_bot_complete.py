@@ -1,7 +1,3 @@
-from sports_api import get_nba_player_id
-print("BDL test - player id:", get_nba_player_id("LeBron James"))
-
-
 import os
 import json
 import re
@@ -11,11 +7,14 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import google.generativeai as genai
 from PIL import Image
 import io
-
+from sports_api_custom import SportsAPIManager
+from sports_api_real import SportsAPIManager
 
 # Configurazione
-TELEGRAM_TOKEN = "IL_TUO_TOKEN_QUI"  # Sostituisci con il tuo token da @BotFather
-GEMINI_API_KEY = "LA_TUA_API_KEY_GEMINI"  # API key gratuita da https://makersuite.google.com/app/apikey
+# Per uso locale: inserisci i token qui sotto
+# Per uso su Render: lascia così, i token si mettono nelle variabili d'ambiente
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "IL_TUO_TOKEN_QUI")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "LA_TUA_API_KEY_GEMINI")
 
 # File per salvare lo storico
 HISTORY_FILE = "betting_history.json"
@@ -26,6 +25,8 @@ genai.configure(api_key=GEMINI_API_KEY)
 class BettingAnalyzer:
     def __init__(self):
         self.history = self.load_history()
+        self.api_manager = SportsAPIManager()  # Gestore API sportive
+        self.api_manager = SportsAPIManager()  # Inizializza API manager
     
     def load_history(self):
         """Carica lo storico delle scommesse"""
@@ -80,57 +81,6 @@ REGOLE:
         except Exception as e:
             print(f"Errore nell'estrazione: {e}")
             return None
-    
-    def search_match_result_nba(self, match, player=None, bet_type="", date=""):
-        """Cerca risultati NBA usando ricerca web simulata"""
-        # Questa funzione sarà implementata con vere API o web scraping
-        # Per ora ritorna un placeholder
-        
-        # Esempio di integrazione con API-Basketball (gratuita)
-        # https://www.api-football.com/documentation-v3
-        
-        return {
-            "found": False,
-            "result": "⏳ Partita non ancora conclusa o in attesa di verifica",
-            "bet_won": None,
-            "details": ""
-        }
-    
-    def search_match_result_football(self, match, bet_type, date):
-        """Cerca risultati calcio"""
-        return {
-            "found": False,
-            "result": "⏳ Partita non ancora conclusa o in attesa di verifica",
-            "bet_won": None,
-            "details": ""
-        }
-    
-    def search_match_result_tennis(self, match, bet_type, date):
-        """Cerca risultati tennis"""
-        return {
-            "found": False,
-            "result": "⏳ Partita non ancora conclusa o in attesa di verifica",
-            "bet_won": None,
-            "details": ""
-        }
-    
-    def get_match_result(self, sport, match, date, bet_type, player=None):
-        """Router per cercare risultati in base allo sport"""
-        sport_lower = sport.lower()
-        
-        if sport_lower == "nba":
-            return self.search_match_result_nba(match, player, bet_type, date)
-        elif sport_lower in ["calcio", "football", "soccer"]:
-            return self.search_match_result_football(match, bet_type, date)
-        elif sport_lower == "tennis":
-            return self.search_match_result_tennis(match, bet_type, date)
-        else:
-            return {
-                "found": False,
-                "result": f"⏳ Sport {sport} - verifica manuale necessaria",
-                "bet_won": None,
-                "details": ""
-            }
     
     def calculate_profit_loss(self, bet_info, bet_won):
         """Calcola profitto o perdita"""
